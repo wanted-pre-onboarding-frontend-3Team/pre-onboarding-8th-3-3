@@ -202,6 +202,10 @@ input[type="file"]::file-selector-button,
 button {
   color: initial;
 } 
+
+body {
+  background: #cae9ff;
+}
 `;
 
 export default GlobalStyle;

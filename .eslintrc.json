@@ -47,6 +47,7 @@
     "import/no-cycle": "off",
     "no-alert": "off",
     "import/no-named-as-default": "off",
+    "react/destructuring-assignment": "off",
 
     "no-shadow": "off",
     "no-unused-expressions": ["warn"],
