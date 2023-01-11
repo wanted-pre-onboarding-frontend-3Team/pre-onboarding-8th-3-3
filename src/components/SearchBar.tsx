@@ -1,9 +1,9 @@
 import { StyledSearchDiv, StyledDeleteButton, StyledSearchInput, StyledSearchButton } from '../style/search';
-import { SerchBarProps } from '../types/search.type';
+import { SearchBarProps } from '../types/search.type';
 import { TiDeleteOutline } from 'react-icons/ti';
 import React from 'react';
 
-const SearchBar = ({ setSearchWord }: SerchBarProps) => {
+const SearchBar = ({ setSearchWord }: SearchBarProps) => {
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchWord(event.target.value);
   };
