@@ -19,6 +19,7 @@ const ItemWrapper = styled.li`
   display: flex;
   align-items: center;
   margin: 18px 0;
+  cursor: pointer;
 
   p {
     margin-left: 10px;
