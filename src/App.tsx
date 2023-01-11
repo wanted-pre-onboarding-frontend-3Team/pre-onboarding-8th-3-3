@@ -1,7 +1,7 @@
-import SearchBar from './components/SearchBar';
+import Search from './components/Search';
 
 const App = () => {
-  return <SearchBar />;
+  return <Search />;
 };
 
 export default App;
