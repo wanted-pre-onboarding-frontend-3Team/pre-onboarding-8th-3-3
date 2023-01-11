@@ -1,27 +1,26 @@
 import styled from 'styled-components';
 import { AiOutlineSearch } from 'react-icons/ai';
-import { ChangeEvent } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { ChangeEvent, useEffect } from 'react';
+import { useSetRecoilState, useRecoilState } from 'recoil';
 import axios from 'axios';
 import { sickState } from '../states/sickState';
 import { searchValueState } from '../states/searchValueState';
+import useDebounce from '../hooks/useDebounce';
 
 const SearchInput = () => {
   const setSick = useSetRecoilState(sickState);
-  const setSearchValue = useSetRecoilState(searchValueState);
-
-  const searchSickHandler = async (e: ChangeEvent<HTMLInputElement>) => {
-    const response = await axios.get(`http://localhost:4000/sick?q=${e.target.value}`);
-    const { data } = response;
-    setSick(data);
-    setSearchValue(e.target.value);
-  };
-
+  const [searchValue, setSearchValue] = useRecoilState(searchValueState);
+  const debounce = useDebounce(searchValue);
+  useEffect(() => {
+    if (debounce) {
+      axios.get(`http://localhost:4000/sick?q=${debounce}`).then(({ data }) => setSick(data));
+    }
+  }, [debounce, setSick]);
   return (
     <Container>
       <TextInputWrapper>
         <AiOutlineSearch />
-        <TextInput onChange={searchSickHandler} type="text" placeholder="질환명을 입력해 주세요." />
+        <TextInput onChange={(e) => setSearchValue(e.target.value)} type="text" placeholder="질환명을 입력해 주세요." />
       </TextInputWrapper>
       <SearchButton>
         <AiOutlineSearch />
