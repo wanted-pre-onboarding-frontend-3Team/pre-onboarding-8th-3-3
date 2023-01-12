@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-import { searchValueState } from '../states/searchValueState';
+import { searchValueState } from '../states/searchValueState.state';
 import { AiOutlineSearch } from 'react-icons/ai';
 import useHighlight from '../hooks/use-highlight';
 

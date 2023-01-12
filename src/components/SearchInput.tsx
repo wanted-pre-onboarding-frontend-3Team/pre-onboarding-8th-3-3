@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { ChangeEvent } from 'react';
 import { useSetRecoilState } from 'recoil';
-import { searchValueState } from '../states/searchValueState';
+import { searchValueState } from '../states/searchValueState.state';
 
 const SearchInput = () => {
   const setSearchValue = useSetRecoilState(searchValueState);
