@@ -8,11 +8,11 @@ const App = () => {
   const searchValue = useRecoilValue(searchValueState);
 
   return (
-    <>
+    <div>
       <SickTitle />
       <SearchInput />
       {searchValue !== '' && <ResultWrapper />}
-    </>
+    </div>
   );
 };
 

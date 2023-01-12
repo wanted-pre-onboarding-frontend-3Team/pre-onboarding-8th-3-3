@@ -1,18 +1,19 @@
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
+import { searchIdxState } from '../states/searchValueState';
 import { sickState } from '../states/sickState';
 import ResultItem from './ResultItem';
 
 const ResultWrapper = () => {
   const sick = useRecoilValue(sickState);
-
+  const searchIdx = useRecoilValue(searchIdxState);
   return (
     <ResultList>
       {sick.length > 0 && (
         <>
           <Recommend>추천 검색어</Recommend>
-          {sick.map((data) => (
-            <ResultItem key={data.sickCd} title={data.sickNm} />
+          {sick.map((data, idx) => (
+            <ResultItem key={data.sickCd} isSame={idx === searchIdx} title={data.sickNm} />
           ))}
         </>
       )}
@@ -31,6 +32,8 @@ const ResultList = styled.ul`
   margin: 0 auto;
   border-radius: 10px;
   padding: 20px;
+  max-height: 50vh;
+  overflow-y: scroll;
 `;
 
 const Recommend = styled.p`

@@ -1,28 +1,50 @@
 import styled from 'styled-components';
 import { AiOutlineSearch } from 'react-icons/ai';
-import { ChangeEvent, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useSetRecoilState, useRecoilState } from 'recoil';
-import axios from 'axios';
 import { sickState } from '../states/sickState';
-import { searchValueState } from '../states/searchValueState';
+import { searchIdxState, searchValueState } from '../states/searchValueState';
 import useDebounce from '../hooks/useDebounce';
+import useCache from '../hooks/useCache';
 
 const SearchInput = () => {
   const setSick = useSetRecoilState(sickState);
   const [searchValue, setSearchValue] = useRecoilState(searchValueState);
+  const [searchIdx, setSearchIdx] = useRecoilState(searchIdxState);
   const debounce = useDebounce(searchValue);
+  const cache = useCache(debounce);
+
   useEffect(() => {
     if (debounce) {
-      axios.get(`http://localhost:4000/sick?q=${debounce}`).then(({ data }) => setSick(data));
+      if (cache) {
+        setSick(cache);
+      }
     }
-  }, [debounce, setSick]);
+    if (debounce === '') {
+      setSick([]);
+    }
+  }, [debounce, setSick, cache]);
+  const listIdxHandler = (e: React.KeyboardEvent<HTMLFormElement>) => {
+    if (e.key === 'ArrowUp') {
+      setSearchIdx((prev) => prev - 1);
+    } else if (e.key === 'ArrowDown') {
+      setSearchIdx((prev) => prev + 1);
+    } else if (e.key === 'Backspace') {
+      setSick([]);
+    }
+  };
   return (
-    <Container>
+    <Container onKeyDownCapture={listIdxHandler}>
       <TextInputWrapper>
         <AiOutlineSearch />
-        <TextInput onChange={(e) => setSearchValue(e.target.value)} type="text" placeholder="질환명을 입력해 주세요." />
+        <TextInput
+          onChange={(e) => setSearchValue(e.target.value)}
+          value={searchValue}
+          type="text"
+          placeholder="질환명을 입력해 주세요."
+        />
       </TextInputWrapper>
-      <SearchButton>
+      <SearchButton onClick={(e) => e.preventDefault()}>
         <AiOutlineSearch />
       </SearchButton>
     </Container>
