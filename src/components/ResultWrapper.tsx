@@ -1,10 +1,18 @@
-import { useRecoilValue } from 'recoil';
+import { useEffect } from 'react';
+import { useRecoilValue, useRecoilState } from 'recoil';
 import styled from 'styled-components';
-import { sickState } from '../states/sickState';
+import { searchValueState } from '../states/searchValueState';
+import { sickState, sickSelector } from '../states/sickState';
 import ResultItem from './ResultItem';
 
 const ResultWrapper = () => {
-  const sick = useRecoilValue(sickState);
+  const [sick, setSick] = useRecoilState(sickState);
+  const searchValue = useRecoilValue(searchValueState);
+  const sickList = useRecoilValue(sickSelector({ keyword: searchValue }));
+
+  useEffect(() => {
+    setSick(sickList);
+  }, [sickList, setSick]);
 
   return (
     <ResultList>
