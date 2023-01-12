@@ -1,4 +1,4 @@
-export interface SickTypes {
+export interface SickType {
   sickCd: string;
   sickNm: string;
 }
