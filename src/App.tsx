@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { useRecoilValue } from 'recoil';
 import ResultWrapper from './components/ResultWrapper';
 import SearchInput from './components/SearchInput';
@@ -11,7 +12,7 @@ const App = () => {
     <>
       <SickTitle />
       <SearchInput />
-      {searchValue !== '' && <ResultWrapper />}
+      <Suspense fallback={<div />}>{searchValue !== '' && <ResultWrapper />}</Suspense>
     </>
   );
 };
