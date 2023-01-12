@@ -2,19 +2,18 @@ import styled from 'styled-components';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { ChangeEvent } from 'react';
 import { useSetRecoilState } from 'recoil';
-import axios from 'axios';
-import { sickState } from '../states/sickState';
 import { searchValueState } from '../states/searchValueState';
 
 const SearchInput = () => {
-  const setSick = useSetRecoilState(sickState);
   const setSearchValue = useSetRecoilState(searchValueState);
-
+  let timer: ReturnType<typeof setTimeout>;
   const searchSickHandler = async (e: ChangeEvent<HTMLInputElement>) => {
-    const response = await axios.get(`http://localhost:4000/sick?q=${e.target.value}`);
-    const { data } = response;
-    setSick(data);
-    setSearchValue(e.target.value);
+    if (timer) {
+      clearTimeout(timer);
+    }
+    timer = setTimeout(() => {
+      setSearchValue(e.target.value);
+    }, 400);
   };
 
   return (
