@@ -1,33 +1,18 @@
-import { atom, selector } from 'recoil';
-import { SickTypes } from '../types/sick.type';
+import { atom, selectorFamily } from 'recoil';
+import { SickType } from '../types/sick.type';
+import { getRecommend } from '../apis/search';
 
-export const sickState = atom<SickTypes[]>({
+export const sickState = atom<SickType[]>({
   key: 'sickState',
   default: [],
 });
 
-// export const filteredSickState = atom<SickTypes[]>({
-//   key: 'filteredSickState',
-//   default: [],
-// });
-
-// export const sickSelector = selector({
-//   key: 'sickSelector',
-//   get: ({ get }) => {
-//     const data = get(sickState);
-//     return data;
-//   },
-
-//   set: ({ get, set }, value) => {
-//     const data = get(sickState);
-
-//     // @ts-ignore
-//     if (value === '') set(filteredSickState, []);
-//     else {
-//       // @ts-ignore
-//       const regExp = new RegExp(value, 'd');
-//       const matchedSick = data.filter((sick) => sick.sickNm.match(regExp));
-//       set(filteredSickState, matchedSick);
-//     }
-//   },
-// });
+export const sickSelector = selectorFamily<SickType[], { keyword: string }>({
+  key: 'sickSelector',
+  get:
+    ({ keyword }: { keyword: string }) =>
+    async () => {
+      const response = await getRecommend(keyword);
+      return response.data as SickType[];
+    },
+});
