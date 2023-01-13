@@ -28,6 +28,9 @@ const ResultWrapper = () => {
 };
 
 const ResultList = styled.ul`
+  display: flex;
+  flex-flow: column;
+  gap: 5px;
   background: #fff;
   width: 490px;
   margin: 0 auto;

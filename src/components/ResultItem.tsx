@@ -25,9 +25,10 @@ type ItemStyleType = {
 const ItemWrapper = styled.li<ItemStyleType>`
   display: flex;
   align-items: center;
-  padding: 18px 0;
+  padding: 9px 0;
   cursor: pointer;
   background-color: ${({ isSame }) => (isSame ? 'lightgray' : 'white')};
+  border-radius: 5px;
   p {
     margin-left: 10px;
   }
