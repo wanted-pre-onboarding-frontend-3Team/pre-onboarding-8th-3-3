@@ -1,29 +1,54 @@
 import styled from 'styled-components';
 import { AiOutlineSearch } from 'react-icons/ai';
-import { ChangeEvent } from 'react';
-import { useSetRecoilState } from 'recoil';
-import axios from 'axios';
+import { useEffect } from 'react';
+import { useRecoilState } from 'recoil';
 import { sickState } from '../states/sickState';
-import { searchValueState } from '../states/searchValueState';
+import { searchIdxState, searchValueState } from '../states/searchValueState';
+import useDebounce from '../hooks/useDebounce';
+import useCache from '../hooks/useCache';
 
 const SearchInput = () => {
-  const setSick = useSetRecoilState(sickState);
-  const setSearchValue = useSetRecoilState(searchValueState);
+  const [sick, setSick] = useRecoilState(sickState);
+  const [searchValue, setSearchValue] = useRecoilState(searchValueState);
+  const [searchIdx, setSearchIdx] = useRecoilState(searchIdxState);
+  const debounce = useDebounce(searchValue);
+  const cache = useCache(debounce);
 
-  const searchSickHandler = async (e: ChangeEvent<HTMLInputElement>) => {
-    const response = await axios.get(`http://localhost:4000/sick?q=${e.target.value}`);
-    const { data } = response;
-    setSick(data);
-    setSearchValue(e.target.value);
+  useEffect(() => {
+    if (debounce) {
+      if (cache) {
+        setSick(cache);
+      }
+    }
+    if (debounce === '') {
+      setSick([]);
+    }
+  }, [debounce, setSick, cache]);
+  const listIdxHandler = (e: React.KeyboardEvent<HTMLFormElement>) => {
+    if (e.key === 'ArrowUp') {
+      setSearchIdx((prev) => prev - 1);
+    } else if (e.key === 'ArrowDown') {
+      setSearchIdx((prev) => prev + 1);
+    } else if (e.key === 'Backspace') {
+      setSick([]);
+    } else if (e.key === 'Enter') {
+      setSearchValue(sick[searchIdx].sickNm);
+    } else {
+      setSearchIdx(0);
+    }
   };
-
   return (
-    <Container>
+    <Container onKeyUp={listIdxHandler}>
       <TextInputWrapper>
         <AiOutlineSearch />
-        <TextInput onChange={searchSickHandler} type="text" placeholder="질환명을 입력해 주세요." />
+        <TextInput
+          onChange={(e) => setSearchValue(e.target.value)}
+          value={searchValue}
+          type="text"
+          placeholder="질환명을 입력해 주세요."
+        />
       </TextInputWrapper>
-      <SearchButton>
+      <SearchButton onClick={(e) => e.preventDefault()}>
         <AiOutlineSearch />
       </SearchButton>
     </Container>
