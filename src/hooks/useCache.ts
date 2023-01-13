@@ -19,7 +19,7 @@ const useCache = (keyword: string) => {
       setCacheResult(await cache.json());
       return;
     }
-    await fetch(`http://localhost:4000/sick?q=${url}`)
+    await fetch(`http://localhost:4000/sick?q=${url}&_page=1&_limit=10`)
       .then((data) => {
         console.info('calling api');
         const clone = data.clone();
