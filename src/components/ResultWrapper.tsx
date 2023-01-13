@@ -11,8 +11,8 @@ const ResultWrapper = () => {
       {sick.length > 0 && (
         <>
           <Recommend>추천 검색어</Recommend>
-          {sick.map((data) => (
-            <ResultItem key={data.sickCd} title={data.sickNm} />
+          {sick.map((data, index) => (
+            <ResultItem key={data.sickCd} title={data.sickNm} index={index} />
           ))}
         </>
       )}

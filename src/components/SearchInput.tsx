@@ -1,21 +1,50 @@
 import styled from 'styled-components';
 import { AiOutlineSearch } from 'react-icons/ai';
-import { ChangeEvent } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { ChangeEvent, useState, useCallback } from 'react';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import axios from 'axios';
-import { sickState } from '../states/sickState';
-import { searchValueState } from '../states/searchValueState';
+import { sickCacheSelector, sickState } from '../states/sickState';
+import { SickCacheItem } from '../types/sick.type';
 
 const SearchInput = () => {
-  const setSick = useSetRecoilState(sickState);
-  const setSearchValue = useSetRecoilState(searchValueState);
+  const [cacheTable, setCacheTable] = useRecoilState(sickCacheSelector);
+  const setSickState = useSetRecoilState(sickState);
+  const [timerId, setTimerId] = useState<NodeJS.Timeout | null>(null);
 
-  const searchSickHandler = async (e: ChangeEvent<HTMLInputElement>) => {
-    const response = await axios.get(`http://localhost:4000/sick?q=${e.target.value}`);
-    const { data } = response;
-    setSick(data);
-    setSearchValue(e.target.value);
-  };
+  const searchSickHandler = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      if (timerId) {
+        clearTimeout(timerId);
+        setTimerId(null);
+      }
+
+      const newTimerId = setTimeout(async () => {
+        const keyword = e.target.value;
+
+        if (keyword === '') {
+          setSickState([]);
+          return;
+        }
+
+        const typedCacheTable = cacheTable as SickCacheItem[];
+        const matchedSickData = typedCacheTable.find((sickData) => sickData.keyword === keyword);
+
+        if (matchedSickData) {
+          setCacheTable({ type: 'HIT', value: keyword });
+        } else {
+          console.info('calling api');
+
+          const response = await axios.get(`http://localhost:4000/sick?q=${keyword}`);
+          const { data } = response;
+
+          setCacheTable({ type: 'NEW', value: { keyword, sickList: data, hit: 0 } });
+        }
+      }, 300);
+
+      setTimerId(newTimerId);
+    },
+    [timerId, cacheTable],
+  );
 
   return (
     <Container>
