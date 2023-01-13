@@ -14,6 +14,7 @@ const useCache = (keyword: string) => {
     const encode = encodeURI(url);
     const cacheStorage = await caches.open('searchQuery');
     const cache = await cacheStorage.match(`sick?q=${encode}`);
+
     if (cache) {
       setCacheResult(await cache.json());
       return;
@@ -25,7 +26,7 @@ const useCache = (keyword: string) => {
         cacheStorage.put(`sick?q=${encode}`, clone);
         setTimeout(() => {
           cacheStorage.delete(`sick?q=${encode}`);
-        }, 60 * 1000);
+        }, 30 * 1000);
         return data.json();
       })
       .then((data) => setCacheResult(data))
@@ -33,50 +34,5 @@ const useCache = (keyword: string) => {
   };
   return cacheResult;
 };
-
-// const handleCache = async (target: 'add' | 'match', url: string) => {
-//   const cacheStorage = await caches.open('searchQuery');
-//   if (target === 'add') {
-//     const cache = await cacheStorage.add(url);
-//     console.log(cache);
-//     setTimeout(async () => {
-//       await cacheStorage.delete(url);
-//     }, 1000 * 60 * 30);
-//     return cache;
-//   }
-//   if (target === 'match') {
-//     const cache = await cacheStorage.match(url);
-//     return cache;
-//   }
-
-//   return null;
-// };
-
-// if (cache) {
-//   return cache;
-// }
-// caches.open('searchQuery').then((cache) => {
-//   cache.add(`sick?q=${encode}`).then(() => {
-//     axios
-//       .get(`http://localhost:4000/sick?q=${url}`)
-//       .then(({ data }) => data)
-//       .then((data: SickTypes[]) => {
-//         setCacheResult(data);
-//         setTimeout(() => {
-//           setCache({ mode: 'delete', url });
-//         }, 1000 * 60 * 60);
-//       });
-//   });
-// });
-// const [cache, setCache] = useRecoilState(sickCacheState(url));
-// axios
-//   .get(`http://localhost:4000/sick?q=${url}`)
-//   .then(({ data }) => data)
-//   .then((data: SickTypes[]) => {
-//     setCache({ mode: 'set', data });
-//     setTimeout(() => {
-//       setCache({ mode: 'delete', url });
-//     }, 1000 * 60 * 60);
-//   });
 
 export default useCache;

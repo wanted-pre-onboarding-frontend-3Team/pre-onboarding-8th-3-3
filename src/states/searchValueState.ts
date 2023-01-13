@@ -7,7 +7,7 @@ export const searchValueState = atom<string>({
 });
 const searchIdx = atom<number>({
   key: 'searchIdx',
-  default: -1,
+  default: 0,
 });
 
 export const searchIdxState = selector<number>({

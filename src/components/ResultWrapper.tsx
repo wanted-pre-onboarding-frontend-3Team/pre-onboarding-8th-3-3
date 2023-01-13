@@ -7,6 +7,7 @@ import ResultItem from './ResultItem';
 const ResultWrapper = () => {
   const sick = useRecoilValue(sickState);
   const searchIdx = useRecoilValue(searchIdxState);
+
   return (
     <ResultList>
       {sick.length > 0 && (

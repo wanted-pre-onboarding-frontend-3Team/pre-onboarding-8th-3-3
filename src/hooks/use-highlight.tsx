@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 const useHighlight = (title: string, value: string) => {
-  if (value !== '' && title.includes(value)) {
+  if (value !== '' && title.toLowerCase().includes(value.toLowerCase())) {
     const parts = title.split(new RegExp(`(${value})`, 'gi'));
 
     return (

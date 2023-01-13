@@ -1,14 +1,14 @@
 import styled from 'styled-components';
 import { AiOutlineSearch } from 'react-icons/ai';
 import { useEffect } from 'react';
-import { useSetRecoilState, useRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { sickState } from '../states/sickState';
 import { searchIdxState, searchValueState } from '../states/searchValueState';
 import useDebounce from '../hooks/useDebounce';
 import useCache from '../hooks/useCache';
 
 const SearchInput = () => {
-  const setSick = useSetRecoilState(sickState);
+  const [sick, setSick] = useRecoilState(sickState);
   const [searchValue, setSearchValue] = useRecoilState(searchValueState);
   const [searchIdx, setSearchIdx] = useRecoilState(searchIdxState);
   const debounce = useDebounce(searchValue);
@@ -31,10 +31,14 @@ const SearchInput = () => {
       setSearchIdx((prev) => prev + 1);
     } else if (e.key === 'Backspace') {
       setSick([]);
+    } else if (e.key === 'Enter') {
+      setSearchValue(sick[searchIdx].sickNm);
+    } else {
+      setSearchIdx(0);
     }
   };
   return (
-    <Container onKeyDownCapture={listIdxHandler}>
+    <Container onKeyUp={listIdxHandler}>
       <TextInputWrapper>
         <AiOutlineSearch />
         <TextInput
