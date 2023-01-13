@@ -15,30 +15,30 @@ const SearchInput = () => {
   const cache = useCache(debounce);
 
   useEffect(() => {
-    if (debounce) {
-      if (cache) {
-        setSick(cache);
-      }
+    if (debounce && cache) {
+      setSick(cache);
     }
     if (debounce === '') {
       setSick([]);
     }
   }, [debounce, setSick, cache]);
   const listIdxHandler = (e: React.KeyboardEvent<HTMLFormElement>) => {
+    if (e.nativeEvent.isComposing) return;
     if (e.key === 'ArrowUp') {
       setSearchIdx((prev) => prev - 1);
     } else if (e.key === 'ArrowDown') {
       setSearchIdx((prev) => prev + 1);
     } else if (e.key === 'Backspace') {
       setSick([]);
-    } else if (e.key === 'Enter') {
+    } else if (e.key === 'Enter' && sick[searchIdx]) {
       setSearchValue(sick[searchIdx].sickNm);
+      setSearchIdx(0);
     } else {
       setSearchIdx(0);
     }
   };
   return (
-    <Container onKeyUp={listIdxHandler}>
+    <Container onKeyDown={listIdxHandler}>
       <TextInputWrapper>
         <AiOutlineSearch />
         <TextInput
