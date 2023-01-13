@@ -1,7 +1,7 @@
 import { atom } from 'recoil';
 import { SickType } from '../types/sick.type';
 
-export const sickState = atom<SickType[]>({
-  key: 'sickState',
+export const recommendState = atom<SickType[]>({
+  key: 'recommendState',
   default: [],
 });

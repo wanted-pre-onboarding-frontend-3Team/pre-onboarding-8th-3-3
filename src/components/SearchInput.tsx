@@ -1,26 +1,52 @@
 import styled from 'styled-components';
 import { AiOutlineSearch } from 'react-icons/ai';
-import { ChangeEvent } from 'react';
+import React, { ChangeEvent, FormEvent } from 'react';
 import { useSetRecoilState } from 'recoil';
-import { searchValueState } from '../states/searchValueState.state';
+import { searchValueState } from '../states/searchValue.state';
+import { focusIndexState } from '../states/focusIndex.state';
+import { useFocus } from '../hooks/use-focus';
 
 const SearchInput = () => {
+  const { inputValue, setInputValue, handleFocus } = useFocus();
   const setSearchValue = useSetRecoilState(searchValueState);
+  const setFocusIndex = useSetRecoilState(focusIndexState);
   let timer: ReturnType<typeof setTimeout>;
-  const searchSickHandler = async (e: ChangeEvent<HTMLInputElement>) => {
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+  };
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+    setFocusIndex(-1);
+    searchSick(e.target.value);
+  };
+
+  const searchSick = (value: string) => {
     if (timer) {
       clearTimeout(timer);
     }
     timer = setTimeout(() => {
-      setSearchValue(e.target.value);
-    }, 400);
+      setSearchValue(value);
+    }, 500);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const focusOrSubmit = handleFocus(e);
+    if (focusOrSubmit === 'submit') handleSubmit(e);
   };
 
   return (
-    <Container>
+    <Container onSubmit={handleSubmit}>
       <TextInputWrapper>
         <AiOutlineSearch />
-        <TextInput onChange={searchSickHandler} type="text" placeholder="질환명을 입력해 주세요." />
+        <TextInput
+          onChange={handleChange}
+          onKeyDown={handleKeyDown}
+          type="text"
+          placeholder="질환명을 입력해 주세요."
+          value={inputValue}
+        />
       </TextInputWrapper>
       <SearchButton>
         <AiOutlineSearch />

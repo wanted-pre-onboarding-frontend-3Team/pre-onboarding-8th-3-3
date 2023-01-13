@@ -1,30 +1,48 @@
 import { useEffect } from 'react';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import styled from 'styled-components';
-import { searchValueState } from '../states/searchValueState';
-import { sickState, sickSelector } from '../states/sickState';
+import { getRecommend } from '../apis/search';
+import { cacheState } from '../states/cache.state';
+import { focusIndexState } from '../states/focusIndex.state';
+import { searchValueState } from '../states/searchValue.state';
+import { recommendState } from '../states/recommend.state';
+import { SickType } from '../types/sick.type';
 import ResultItem from './ResultItem';
+import { AxiosResponse } from 'axios';
 
 const ResultWrapper = () => {
-  const [sick, setSick] = useRecoilState(sickState);
+  const [recommend, setRecommend] = useRecoilState(recommendState);
   const searchValue = useRecoilValue(searchValueState);
-  const sickList = useRecoilValue(sickSelector({ keyword: searchValue }));
+  const [cache, setCache] = useRecoilState(cacheState);
+  const focusIndex = useRecoilValue(focusIndexState);
 
   useEffect(() => {
-    setSick(sickList);
-  }, [sickList, setSick]);
+    const cachedData = cache.filter((el) => el.keyword === searchValue)[0];
+    if (cachedData) {
+      setRecommend(cachedData.cacheList);
+    } else {
+      getRecommend(searchValue)
+        .then((res: AxiosResponse) => {
+          setRecommend(res.data as SickType[]);
+          setCache([...cache, { keyword: searchValue, cacheList: res.data as SickType[] }]);
+        })
+        .catch(() => {
+          // TODO: 에러 처리
+        });
+    }
+  }, [cache, searchValue, setCache, setRecommend]);
 
   return (
     <ResultList>
-      {sick.length > 0 && (
+      {recommend.length > 0 && (
         <>
           <Recommend>추천 검색어</Recommend>
-          {sick.map((data) => (
-            <ResultItem key={data.sickCd} title={data.sickNm} />
+          {recommend.map((data, index) => (
+            <ResultItem key={data.sickCd} title={data.sickNm} isFocus={index === focusIndex} />
           ))}
         </>
       )}
-      {sick.length <= 0 && (
+      {recommend.length <= 0 && (
         <EmptySearchWrapper>
           <p>검색어 없음</p>
         </EmptySearchWrapper>
